@@ -1,3 +1,127 @@
+// --- I18n ---
+let translations = {};
+
+// 内嵌语言数据，避免CORS问题
+const LANGUAGE_DATA = {
+    'en': {
+        "title": "Modern Minimalist Tetris",
+        "score": "Score",
+        "lines": "Lines",
+        "level": "Level",
+        "next": "Next",
+        "game-controls": "Game Controls",
+        "move": "Move",
+        "accelerate": "Accelerate",
+        "rotate": "Rotate",
+        "drop": "Drop",
+        "pause": "Pause",
+        "game-over": "Game Over",
+        "final-score": "Final Score",
+        "restart": "Restart",
+        "game-paused": "Game Paused",
+        "resume": "Resume"
+    },
+    'zh-CN': {
+        "title": "现代简约俄罗斯方块",
+        "score": "分数",
+        "lines": "行数",
+        "level": "等级",
+        "next": "下一个",
+        "game-controls": "游戏控制",
+        "move": "移动",
+        "accelerate": "加速",
+        "rotate": "旋转",
+        "drop": "瞬落",
+        "pause": "暂停",
+        "game-over": "游戏结束",
+        "final-score": "最终分数",
+        "restart": "重新开始",
+        "game-paused": "游戏暂停",
+        "resume": "继续游戏"
+    }
+};
+
+function loadTranslations(lang) {
+    console.log('Loading translations for language:', lang);
+    
+    if (LANGUAGE_DATA[lang]) {
+        translations = LANGUAGE_DATA[lang];
+        console.log('Translations loaded from embedded data');
+    } else {
+        // 如果语言不存在，回退到英文
+        translations = LANGUAGE_DATA['en'];
+        console.warn(`Language ${lang} not found, falling back to English`);
+    }
+    
+    translatePage();
+    updateLanguageSwitcher(lang);
+}
+
+function translatePage() {
+    const elementsToTranslate = document.querySelectorAll('[data-i18n]');
+    
+    elementsToTranslate.forEach(element => {
+        const key = element.getAttribute('data-i18n');
+        if (translations[key]) {
+            element.textContent = translations[key];
+        }
+    });
+    
+    // Also update the title
+    if (translations.title) {
+        document.title = translations.title;
+    }
+    // Update dynamic text in modals if they are visible
+    updateDynamicText();
+}
+
+function updateLanguageSwitcher(lang) {
+    const langEn = document.getElementById('lang-en');
+    const langZhCN = document.getElementById('lang-zh-CN');
+    
+    langEn.classList.remove('active');
+    langZhCN.classList.remove('active');
+    
+    if (lang === 'en') {
+        langEn.classList.add('active');
+    } else if (lang === 'zh-CN') {
+        langZhCN.classList.add('active');
+    }
+}
+
+function updateDynamicText() {
+    if (isGameOver) {
+        modalTitle.textContent = translations['game-over'] || "Game Over";
+        restartButton.textContent = translations.restart || "Restart";
+    } else if (isPaused) {
+        modalTitle.textContent = translations['game-paused'] || "Game Paused";
+        restartButton.textContent = translations['resume'] || "Resume";
+    }
+}
+
+function getLanguage() {
+    const savedLang = localStorage.getItem('language');
+    
+    if (savedLang) {
+        return savedLang;
+    }
+
+    // 根据浏览器语言自动判断
+    const browserLang = navigator.language || navigator.userLanguage;
+    console.log('Browser language detected:', browserLang);
+    
+    if (browserLang.startsWith('zh')) {
+        return 'zh-CN';
+    }
+    return 'en';
+}
+
+function setLanguage(lang) {
+    localStorage.setItem('language', lang);
+    loadTranslations(lang);
+}
+
+
 // --- DOM Elements ---
 const canvas = document.getElementById('game-board');
 const context = canvas.getContext('2d');
@@ -275,6 +399,21 @@ function gameLoop(time = 0) {
 }
 
 function init() {
+    const lang = getLanguage();
+    loadTranslations(lang);
+    updateLanguageSwitcher(lang);
+
+    // Setup language switcher event listeners
+    document.getElementById('lang-en').addEventListener('click', (e) => {
+        e.preventDefault();
+        setLanguage('en');
+    });
+
+    document.getElementById('lang-zh-CN').addEventListener('click', (e) => {
+        e.preventDefault();
+        setLanguage('zh-CN');
+    });
+
     // Setup Canvases
     canvas.width = COLS * BLOCK_SIZE;
     canvas.height = ROWS * BLOCK_SIZE;
@@ -302,9 +441,9 @@ function togglePause() {
     if (isGameOver) return;
     isPaused = !isPaused;
     if (isPaused) {
-        modalTitle.textContent = "游戏暂停";
+        modalTitle.textContent = translations['game-paused'] || "Game Paused";
         finalScoreElement.parentNode.style.display = 'none';
-        restartButton.textContent = "继续游戏";
+        restartButton.textContent = translations['resume'] || "Resume";
         gameOverModal.classList.add('visible');
     } else {
         gameOverModal.classList.remove('visible');
@@ -316,10 +455,10 @@ function togglePause() {
 
 function gameOver() {
     isGameOver = true;
-    modalTitle.textContent = "游戏结束";
+    modalTitle.textContent = translations['game-over'] || "Game Over";
     finalScoreElement.textContent = score;
     finalScoreElement.parentNode.style.display = 'block';
-    restartButton.textContent = "重新开始";
+    restartButton.textContent = translations.restart || "Restart";
     gameOverModal.classList.add('visible');
 }
 
@@ -338,7 +477,7 @@ document.addEventListener('keydown', event => {
         move(1);
     } else if (event.key === 'ArrowDown') {
         pieceDrop();
-    } else if (event.key === 'ArrowUp' || event.key.toLowerCase() === 'x') {
+    } else if (event.key.toLowerCase() === 'x' || event.key === 'ArrowUp') {
         rotate(currentPiece);
     } else if (event.key === ' ') {
         hardDrop();

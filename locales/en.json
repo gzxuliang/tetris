@@ -1,0 +1,18 @@
+{
+    "title": "Modern Minimalist Tetris",
+    "score": "Score",
+    "lines": "Lines",
+    "level": "Level",
+    "next": "Next",
+    "game-controls": "Game Controls",
+    "move": "Move",
+    "accelerate": "Accelerate",
+    "rotate": "Rotate",
+    "drop": "Drop",
+    "pause": "Pause",
+    "game-over": "Game Over",
+    "final-score": "Final Score",
+    "restart": "Restart",
+    "game-paused": "Game Paused",
+    "resume": "Resume"
+}

@@ -3,13 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>现代简约俄罗斯方块</title>
+    <title data-i18n="title">现代简约俄罗斯方块</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="src/css/style.css">
+    <style>
+        .lang-switcher {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+        }
+        .lang-switcher a {
+            color: #333;
+            text-decoration: none;
+            padding: 5px;
+            font-family: 'Roboto', sans-serif;
+        }
+        .lang-switcher a.active {
+            font-weight: bold;
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+    <div class="lang-switcher">
+        <a href="#" id="lang-en">English</a> | <a href="#" id="lang-zh-CN">简体中文</a>
+    </div>
+
 
     <div class="game-container">
         <div class="game-board-container">
@@ -18,38 +40,38 @@
         <div class="info-panel">
             <div class="info-card info-card-split">
                 <div>
-                    <h2>分数</h2>
+                    <h2 data-i18n="score">分数</h2>
                     <p id="score">0</p>
                 </div>
                 <div>
-                    <h2>行数</h2>
+                    <h2 data-i18n="lines">行数</h2>
                     <p id="lines">0</p>
                 </div>
             </div>
             <div class="info-card">
-                <h2>等级</h2>
+                <h2 data-i18n="level">等级</h2>
                 <p id="level">1</p>
             </div>
             <div class="info-card">
-                <h2>下一个</h2>
+                <h2 data-i18n="next">下一个</h2>
                 <canvas id="next-piece-canvas"></canvas>
             </div>
             <div class="controls-card">
-                 <h2>游戏控制</h2>
-                 <p><span>移动</span> <span><kbd>←</kbd> / <kbd>→</kbd></span></p>
-                 <p><span>加速</span> <span><kbd>↓</kbd></span></p>
-                 <p><span>旋转</span> <span><kbd>↑</kbd> / <kbd>X</kbd></span></p>
-                 <p><span>瞬落</span> <span><kbd>空格</kbd></span></p>
-                 <p><span>暂停</span> <span><kbd>P</kbd></span></p>
+                 <h2 data-i18n="game-controls">游戏控制</h2>
+                 <p><span data-i18n="move">移动</span> <span><kbd>←</kbd> / <kbd>→</kbd></span></p>
+                 <p><span data-i18n="accelerate">加速</span> <span><kbd>↓</kbd></span></p>
+                 <p><span data-i18n="rotate">旋转</span> <span><kbd>↑</kbd> / <kbd>X</kbd></span></p>
+                 <p><span data-i18n="drop">瞬落</span> <span><kbd>空格</kbd></span></p>
+                 <p><span data-i18n="pause">暂停</span> <span><kbd>P</kbd></span></p>
             </div>
         </div>
     </div>
     
     <div id="game-over-modal" class="modal-overlay">
         <div class="modal-content">
-            <h2 id="modal-title">游戏结束</h2>
-            <p>最终分数: <span id="final-score">0</span></p>
-            <button id="restart-button">重新开始</button>
+            <h2 id="modal-title" data-i18n="game-over">游戏结束</h2>
+            <p><span data-i18n="final-score">最终分数</span>: <span id="final-score">0</span></p>
+            <button id="restart-button" data-i18n="restart">重新开始</button>
         </div>
     </div>
 

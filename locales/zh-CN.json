@@ -1,0 +1,18 @@
+{
+    "title": "现代简约俄罗斯方块",
+    "score": "分数",
+    "lines": "行数",
+    "level": "等级",
+    "next": "下一个",
+    "game-controls": "游戏控制",
+    "move": "移动",
+    "accelerate": "加速",
+    "rotate": "旋转",
+    "drop": "瞬落",
+    "pause": "暂停",
+    "game-over": "游戏结束",
+    "final-score": "最终分数",
+    "restart": "重新开始",
+    "game-paused": "游戏暂停",
+    "resume": "继续游戏"
+}
