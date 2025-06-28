@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现代简约俄罗斯方块</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="src/css/style.css">
+</head>
+<body>
+
+    <div class="game-container">
+        <div class="game-board-container">
+            <canvas id="game-board"></canvas>
+        </div>
+        <div class="info-panel">
+            <div class="info-card info-card-split">
+                <div>
+                    <h2>分数</h2>
+                    <p id="score">0</p>
+                </div>
+                <div>
+                    <h2>行数</h2>
+                    <p id="lines">0</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <h2>等级</h2>
+                <p id="level">1</p>
+            </div>
+            <div class="info-card">
+                <h2>下一个</h2>
+                <canvas id="next-piece-canvas"></canvas>
+            </div>
+            <div class="controls-card">
+                 <h2>游戏控制</h2>
+                 <p><span>移动</span> <span><kbd>←</kbd> / <kbd>→</kbd></span></p>
+                 <p><span>加速</span> <span><kbd>↓</kbd></span></p>
+                 <p><span>旋转</span> <span><kbd>↑</kbd> / <kbd>X</kbd></span></p>
+                 <p><span>瞬落</span> <span><kbd>空格</kbd></span></p>
+                 <p><span>暂停</span> <span><kbd>P</kbd></span></p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="game-over-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modal-title">游戏结束</h2>
+            <p>最终分数: <span id="final-score">0</span></p>
+            <button id="restart-button">重新开始</button>
+        </div>
+    </div>
+
+    <script src="src/js/script.js"></script>
+</body>
+</html>
