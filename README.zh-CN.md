@@ -71,6 +71,12 @@ python -m http.server 8000
 - 支持 JavaScript 的现代浏览器
 - Python 3.x（可选，仅在使用 HTTP 服务器时需要）
 
+## 未来开发
+
+查看我们的功能规划和路线图：
+- 📋 [功能路线图 (中文)](ROADMAP.zh-CN.md)
+- 📋 [Feature Roadmap (English)](ROADMAP.md)
+
 ## 开发工具
 
 本项目使用以下工具协作开发完成：

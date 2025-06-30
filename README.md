@@ -71,6 +71,12 @@ You can manually switch languages by clicking the language links in the top-righ
 - Modern web browser with JavaScript support
 - Python 3.x (optional, only needed if using HTTP server)
 
+## Future Development
+
+Check out our planned features and roadmap:
+- 📋 [Feature Roadmap (English)](ROADMAP.md)
+- 📋 [功能路线图 (中文)](ROADMAP.zh-CN.md)
+
 ## Development
 
 This project was developed collaboratively using:
