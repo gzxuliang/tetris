@@ -175,9 +175,87 @@ let isClearing = false;
 let clearingLines = [];
 let clearingAnimationTime = 0;
 
+// --- Particle System ---
+let particles = [];
+
+class Particle {
+    constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.velocityX = (Math.random() - 0.5) * 8; // 水平速度
+        this.velocityY = Math.random() * -5 - 2; // 向上的速度
+        this.gravity = 0.3; // 重力
+        this.life = 1.0; // 生命值
+        this.decay = Math.random() * 0.02 + 0.015; // 衰减速度
+        this.size = Math.random() * 4 + 2; // 粒子大小
+        this.rotation = Math.random() * Math.PI * 2; // 旋转角度
+        this.rotationSpeed = (Math.random() - 0.5) * 0.2; // 旋转速度
+    }
+    
+    update() {
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+        this.velocityY += this.gravity;
+        this.life -= this.decay;
+        this.rotation += this.rotationSpeed;
+        this.velocityX *= 0.98; // 空气阻力
+    }
+    
+    draw(ctx) {
+        if (this.life <= 0) return;
+        
+        ctx.save();
+        ctx.globalAlpha = this.life;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        
+        // 绘制方形粒子
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        
+        // 添加发光效果
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 10;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        
+        ctx.restore();
+    }
+    
+    isDead() {
+        return this.life <= 0;
+    }
+}
+
 // --- Utility Functions ---
 function createBoard() {
     return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+}
+
+function createParticlesForLine(lineY) {
+    for (let x = 0; x < COLS; x++) {
+        if (board[lineY][x]) {
+            const blockColor = board[lineY][x];
+            // 为每个方块生成多个粒子
+            for (let i = 0; i < 8; i++) {
+                const particleX = x * BLOCK_SIZE + Math.random() * BLOCK_SIZE;
+                const particleY = lineY * BLOCK_SIZE + Math.random() * BLOCK_SIZE;
+                particles.push(new Particle(particleX, particleY, blockColor));
+            }
+        }
+    }
+}
+
+function updateParticles() {
+    // 更新所有粒子
+    particles.forEach(particle => particle.update());
+    
+    // 移除死亡的粒子
+    particles = particles.filter(particle => !particle.isDead());
+}
+
+function drawParticles() {
+    particles.forEach(particle => particle.draw(context));
 }
 
 function getRandomPiece() {
@@ -277,6 +355,9 @@ function drawBoard() {
         context.fillText(startText, canvas.width / 2, canvas.height / 2);
         context.restore();
     }
+    
+    // Draw particles (always on top)
+    drawParticles();
 }
 
 function drawNextPiece() {
@@ -395,13 +476,18 @@ function clearLinesWithAnimation(linesToClear) {
     clearingLines = linesToClear;
     clearingAnimationTime = 0;
     
+    // 为每行生成粒子效果
+    linesToClear.forEach(lineY => {
+        createParticlesForLine(lineY);
+    });
+    
     // 立即更新显示以开始动画
     drawBoard();
     
-    // 500ms后真正清除行
+    // 800ms后真正清除行（增加时间让粒子效果更完整）
     setTimeout(() => {
         clearLinesImmediate(linesToClear);
-    }, 500);
+    }, 800);
 }
 
 function clearLinesImmediate(linesToClear) {
@@ -475,6 +561,9 @@ function gameLoop(time = 0) {
         }
     }
     
+    // 始终更新粒子（即使游戏暂停或清行中）
+    updateParticles();
+    
     drawBoard();
     requestAnimationFrame(gameLoop);
 }
@@ -503,6 +592,9 @@ function init() {
     isClearing = false;
     clearingLines = [];
     clearingAnimationTime = 0;
+    
+    // 清空粒子
+    particles = [];
     
     updateUI();
     drawBoard(); // Draw the initial state
