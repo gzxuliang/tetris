@@ -1,6 +1,6 @@
 [English](README.md)
 
-# 现代简约俄罗斯方块
+# 俄罗斯方块
 
 这是一个使用 HTML、CSS 和 JavaScript 实现的经典俄罗斯方块网页游戏，具有现代化设计和国际化支持。
 
@@ -70,6 +70,13 @@ python -m http.server 8000
 
 - 支持 JavaScript 的现代浏览器
 - Python 3.x（可选，仅在使用 HTTP 服务器时需要）
+
+## 开发工具
+
+本项目使用以下工具协作开发完成：
+- **Gemini AI** - AI 辅助和代码生成
+- **Gemini CLI** - 命令行 AI 集成
+- **Cursor** - AI 驱动的代码编辑器
 
 ## 许可证
 

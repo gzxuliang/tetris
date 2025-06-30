@@ -14,5 +14,7 @@
     "final-score": "Final Score",
     "restart": "Restart",
     "game-paused": "Game Paused",
-    "resume": "Resume"
+    "resume": "Resume",
+    "start-game": "Start Game",
+    "press-space-to-start": "Press Space to Start"
 }

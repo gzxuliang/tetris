@@ -19,7 +19,9 @@ const LANGUAGE_DATA = {
         "final-score": "Final Score",
         "restart": "Restart",
         "game-paused": "Game Paused",
-        "resume": "Resume"
+        "resume": "Resume",
+        "start-game": "Start Game",
+        "press-space-to-start": "Press Space to Start"
     },
     'zh-CN': {
         "title": "现代简约俄罗斯方块",
@@ -37,7 +39,9 @@ const LANGUAGE_DATA = {
         "final-score": "最终分数",
         "restart": "重新开始",
         "game-paused": "游戏暂停",
-        "resume": "继续游戏"
+        "resume": "继续游戏",
+        "start-game": "开始游戏",
+        "press-space-to-start": "按空格键开始"
     }
 };
 
@@ -162,6 +166,7 @@ let dropInterval = 1000;
 let lastTime = 0;
 let isPaused = false;
 let isGameOver = false;
+let gameStarted = false;
 
 // --- Utility Functions ---
 function createBoard() {
@@ -233,6 +238,22 @@ function drawBoard() {
                 }
             });
         });
+    }
+
+    // Draw start game message if game hasn't started
+    if (!gameStarted && !isGameOver) {
+        context.save();
+        context.fillStyle = 'rgba(0, 0, 0, 0.3)';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        
+        context.fillStyle = '#fff';
+        context.font = 'bold 18px Roboto, sans-serif';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        
+        const startText = translations['press-space-to-start'] || '按空格键开始';
+        context.fillText(startText, canvas.width / 2, canvas.height / 2);
+        context.restore();
     }
 }
 
@@ -382,7 +403,7 @@ function move(dir) {
 }
 
 function gameLoop(time = 0) {
-    if(isGameOver) return;
+    if(isGameOver || !gameStarted) return;
 
     const deltaTime = time - lastTime;
     lastTime = time;
@@ -399,21 +420,6 @@ function gameLoop(time = 0) {
 }
 
 function init() {
-    const lang = getLanguage();
-    loadTranslations(lang);
-    updateLanguageSwitcher(lang);
-
-    // Setup language switcher event listeners
-    document.getElementById('lang-en').addEventListener('click', (e) => {
-        e.preventDefault();
-        setLanguage('en');
-    });
-
-    document.getElementById('lang-zh-CN').addEventListener('click', (e) => {
-        e.preventDefault();
-        setLanguage('zh-CN');
-    });
-
     // Setup Canvases
     canvas.width = COLS * BLOCK_SIZE;
     canvas.height = ROWS * BLOCK_SIZE;
@@ -429,16 +435,25 @@ function init() {
     dropInterval = 1000;
     isGameOver = false;
     isPaused = false;
-    
-    nextPiece = getRandomPiece();
-    resetPiece();
+    gameStarted = false;
+    currentPiece = null;
+    nextPiece = null;
     
     updateUI();
+    drawBoard(); // Draw the initial state
+}
+
+function startGame() {
+    if (gameStarted) return;
+    gameStarted = true;
+    nextPiece = getRandomPiece();
+    resetPiece();
+    lastTime = performance.now();
     gameLoop();
 }
 
 function togglePause() {
-    if (isGameOver) return;
+    if (isGameOver || !gameStarted) return;
     isPaused = !isPaused;
     if (isPaused) {
         modalTitle.textContent = translations['game-paused'] || "Game Paused";
@@ -455,6 +470,7 @@ function togglePause() {
 
 function gameOver() {
     isGameOver = true;
+    gameStarted = false;
     modalTitle.textContent = translations['game-over'] || "Game Over";
     finalScoreElement.textContent = score;
     finalScoreElement.parentNode.style.display = 'block';
@@ -464,6 +480,13 @@ function gameOver() {
 
 // --- Event Listeners ---
 document.addEventListener('keydown', event => {
+    if (!gameStarted) {
+        if (event.key === ' ') {
+            startGame();
+        }
+        return;
+    }
+
     if (event.key === 'p' || event.key === 'P') {
          togglePause();
          return;
@@ -486,15 +509,26 @@ document.addEventListener('keydown', event => {
 
 restartButton.addEventListener('click', () => {
     gameOverModal.classList.remove('visible');
-    if(isGameOver){
-        init();
-    } else if (isPaused) {
-        togglePause();
-    }
+    init();
 });
 
 // --- Start Game ---
 window.onload = function() {
+    const lang = getLanguage();
+    loadTranslations(lang);
+    updateLanguageSwitcher(lang);
+
+    // Setup language switcher event listeners
+    document.getElementById('lang-en').addEventListener('click', (e) => {
+        e.preventDefault();
+        setLanguage('en');
+    });
+
+    document.getElementById('lang-zh-CN').addEventListener('click', (e) => {
+        e.preventDefault();
+        setLanguage('zh-CN');
+    });
+
     init();
 };
 
@@ -503,3 +537,4 @@ window.onresize = function() {
      nextCanvas.width = nextCanvasContainer.clientWidth;
      drawNextPiece();
 }
+

@@ -1,6 +1,6 @@
 [简体中文](README.zh-CN.md)
 
-# Modern Minimalist Tetris
+# Tetris
 
 A classic Tetris web game implemented using HTML, CSS, and JavaScript with modern design and internationalization support.
 
@@ -70,6 +70,13 @@ You can manually switch languages by clicking the language links in the top-righ
 
 - Modern web browser with JavaScript support
 - Python 3.x (optional, only needed if using HTTP server)
+
+## Development
+
+This project was developed collaboratively using:
+- **Gemini AI** - AI assistance and code generation
+- **Gemini CLI** - Command-line AI integration
+- **Cursor** - AI-powered code editor
 
 ## License
 
