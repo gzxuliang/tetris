@@ -79,6 +79,11 @@ function translatePage() {
     }
     // Update dynamic text in modals if they are visible
     updateDynamicText();
+    
+    // 重新绘制画布以更新开始游戏的提示文本
+    if (!gameStarted) {
+        drawBoard();
+    }
 }
 
 function updateLanguageSwitcher(lang) {

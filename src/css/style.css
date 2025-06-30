@@ -30,6 +30,8 @@ body {
     align-items: center; /* 水平居中 */
     gap: 1.5rem;
     padding: 2rem;
+    /* 固定最小高度防止语言切换时整体布局跳跃 */
+    min-height: calc(100vh - 4rem);
 }
 
 .game-main-section {
@@ -129,6 +131,10 @@ canvas#game-board {
     /* 计算宽度：游戏面板(300px + 16px padding) + 间距(1.5rem) + 信息面板(200px) */
     width: calc(316px + 1.5rem + 200px);
     box-sizing: border-box;
+    /* 固定高度以防止语言切换时布局变化 */
+    height: 170px;
+    /* 防止内容溢出 */
+    overflow: hidden;
 }
 
 .controls-card h2 {
@@ -139,13 +145,21 @@ canvas#game-board {
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 1px;
+    /* 固定高度防止标题变化导致布局跳跃 */
+    height: 20px;
+    line-height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .controls-row {
     display: flex;
     justify-content: space-between;
-    margin: 0.5rem 0;
+    margin: 0.4rem 0;
     gap: 0.5rem;
+    /* 固定高度确保一致性 */
+    height: 28px;
+    align-items: center;
 }
 
 .control-item {
@@ -153,9 +167,14 @@ canvas#game-board {
     align-items: center;
     justify-content: space-between;
     gap: 0.25rem;
-    flex: 0 0 35%;
-    max-width: 35%;
+    flex: 0 0 48%;
+    max-width: 48%;
     font-size: 0.9rem;
+    /* 固定最小高度确保一致性 */
+    min-height: 24px;
+    /* 防止文本长度变化导致的布局跳跃 */
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .control-item:empty {
@@ -167,6 +186,19 @@ canvas#game-board {
     color: #666;
     font-weight: 600;
     white-space: nowrap;
+    /* 固定宽度防止按键文本变化导致布局跳跃 */
+    min-width: 80px;
+    text-align: right;
+}
+
+/* 控制项文本标签样式 */
+.control-item span:first-child {
+    /* 固定宽度防止文本长度变化导致布局跳跃 */
+    min-width: 50px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .controls-card kbd {
@@ -179,6 +211,10 @@ canvas#game-board {
     box-shadow: inset 0 -2px 0 #ccc;
     margin: 0 1px;
     font-size: 0.8rem;
+    /* 设置最小宽度以保持按键显示一致性 */
+    min-width: 20px;
+    display: inline-block;
+    text-align: center;
 }
 
 .modal-overlay {
