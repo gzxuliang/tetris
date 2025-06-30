@@ -15,6 +15,7 @@ const LANGUAGE_DATA = {
         "rotate": "Rotate",
         "drop": "Drop",
         "pause": "Pause",
+        "space-key": "Space",
         "game-over": "Game Over",
         "final-score": "Final Score",
         "restart": "Restart",
@@ -35,6 +36,7 @@ const LANGUAGE_DATA = {
         "rotate": "旋转",
         "drop": "瞬落",
         "pause": "暂停",
+        "space-key": "空格",
         "game-over": "游戏结束",
         "final-score": "最终分数",
         "restart": "重新开始",
@@ -168,6 +170,11 @@ let isPaused = false;
 let isGameOver = false;
 let gameStarted = false;
 
+// --- Animation State ---
+let isClearing = false;
+let clearingLines = [];
+let clearingAnimationTime = 0;
+
 // --- Utility Functions ---
 function createBoard() {
     return Array.from({ length: ROWS }, () => Array(COLS).fill(0));
@@ -225,7 +232,21 @@ function drawBoard() {
     board.forEach((row, y) => {
         row.forEach((value, x) => {
             if (value) {
-               drawBlock(context, x, y, value);
+                let blockColor = value;
+                
+                // 如果正在清行动画，为待清除行添加闪烁效果
+                if (isClearing && clearingLines.includes(y)) {
+                    const flashInterval = 100; // 闪烁间隔ms
+                    const currentTime = Date.now();
+                    const flashPhase = Math.floor(currentTime / flashInterval) % 2;
+                    
+                    if (flashPhase === 0) {
+                        // 闪烁时变白色
+                        blockColor = '#ffffff';
+                    }
+                }
+                
+                drawBlock(context, x, y, blockColor);
             }
         });
     });
@@ -347,30 +368,67 @@ function pieceDrop() {
 }
 
 function clearLines() {
-    let linesCleared = 0;
-    outer: for (let y = ROWS - 1; y >= 0; y--) {
+    // 找到需要清除的行
+    const linesToClear = [];
+    for (let y = ROWS - 1; y >= 0; y--) {
+        let fullLine = true;
         for (let x = 0; x < COLS; x++) {
             if (board[y][x] === 0) {
-                continue outer;
+                fullLine = false;
+                break;
             }
         }
-        const row = board.splice(y, 1)[0].fill(0);
-        board.unshift(row);
-        y++;
-        linesCleared++;
+        if (fullLine) {
+            linesToClear.push(y);
+        }
     }
     
-    if (linesCleared > 0) {
-        const linePoints = [0, 40, 100, 300, 1200];
-        score += linePoints[linesCleared] * level;
-        lines += linesCleared;
-
-        if (lines >= level * 10) {
-            level++;
-            dropInterval = Math.max(150, 1000 - (level - 1) * 75);
-        }
-        updateUI();
+    if (linesToClear.length > 0) {
+        // 开始清行动画
+        clearLinesWithAnimation(linesToClear);
     }
+}
+
+function clearLinesWithAnimation(linesToClear) {
+    // 标记动画状态
+    isClearing = true;
+    clearingLines = linesToClear;
+    clearingAnimationTime = 0;
+    
+    // 立即更新显示以开始动画
+    drawBoard();
+    
+    // 500ms后真正清除行
+    setTimeout(() => {
+        clearLinesImmediate(linesToClear);
+    }, 500);
+}
+
+function clearLinesImmediate(linesToClear) {
+    // 真正清除行
+    linesToClear.sort((a, b) => b - a); // 从下往上清除
+    linesToClear.forEach(lineY => {
+        const row = board.splice(lineY, 1)[0].fill(0);
+        board.unshift(row);
+    });
+    
+    // 更新分数
+    const linesCleared = linesToClear.length;
+    const linePoints = [0, 40, 100, 300, 1200];
+    score += linePoints[linesCleared] * level;
+    lines += linesCleared;
+
+    if (lines >= level * 10) {
+        level++;
+        dropInterval = Math.max(150, 1000 - (level - 1) * 75);
+    }
+    
+    // 清除动画状态
+    isClearing = false;
+    clearingLines = [];
+    clearingAnimationTime = 0;
+    
+    updateUI();
 }
 
 function resetPiece() {
@@ -410,7 +468,7 @@ function gameLoop(time = 0) {
     const deltaTime = time - lastTime;
     lastTime = time;
 
-    if (!isPaused) {
+    if (!isPaused && !isClearing) {
         dropCounter += deltaTime;
         if (dropCounter > dropInterval) {
             pieceDrop();
@@ -440,6 +498,11 @@ function init() {
     gameStarted = false;
     currentPiece = null;
     nextPiece = null;
+    
+    // 重置动画状态
+    isClearing = false;
+    clearingLines = [];
+    clearingAnimationTime = 0;
     
     updateUI();
     drawBoard(); // Draw the initial state

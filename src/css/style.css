@@ -141,20 +141,44 @@ canvas#game-board {
     letter-spacing: 1px;
 }
 
-.controls-card p {
-    margin: 0.5rem 0;
+.controls-row {
     display: flex;
     justify-content: space-between;
+    margin: 0.5rem 0;
+    gap: 0.5rem;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.25rem;
+    flex: 0 0 35%;
+    max-width: 35%;
+    font-size: 0.9rem;
+}
+
+.control-item:empty {
+    /* 空的控制项不显示 */
+    visibility: hidden;
+}
+
+.controls-card .keys {
+    color: #666;
+    font-weight: 600;
+    white-space: nowrap;
 }
 
 .controls-card kbd {
     background-color: #e9ecef;
     border: 1px solid #dee2e6;
-    padding: 3px 6px;
+    padding: 2px 6px;
     border-radius: 4px;
     font-family: monospace;
     color: #333;
     box-shadow: inset 0 -2px 0 #ccc;
+    margin: 0 1px;
+    font-size: 0.8rem;
 }
 
 .modal-overlay {
@@ -247,5 +271,14 @@ canvas#game-board {
     
     .controls-card {
         width: 100%;
+    }
+    
+    .controls-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .control-item {
+        justify-content: space-between;
     }
 }
