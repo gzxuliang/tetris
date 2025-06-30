@@ -1,10 +1,10 @@
 // --- I18n ---
 let translations = {};
 
-// 内嵌语言数据，避免CORS问题
+// Embedded language data to avoid CORS issues
 const LANGUAGE_DATA = {
     'en': {
-        "title": "Modern Minimalist Tetris",
+        "title": "Tetris",
         "score": "Score",
         "lines": "Lines",
         "level": "Level",
@@ -25,7 +25,7 @@ const LANGUAGE_DATA = {
         "press-space-to-start": "Press Space to Start"
     },
     'zh-CN': {
-        "title": "现代简约俄罗斯方块",
+        "title": "俄罗斯方块",
         "score": "分数",
         "lines": "行数",
         "level": "等级",
@@ -54,7 +54,7 @@ function loadTranslations(lang) {
         translations = LANGUAGE_DATA[lang];
         console.log('Translations loaded from embedded data');
     } else {
-        // 如果语言不存在，回退到英文
+        // Fallback to English if language doesn't exist
         translations = LANGUAGE_DATA['en'];
         console.warn(`Language ${lang} not found, falling back to English`);
     }
@@ -80,7 +80,7 @@ function translatePage() {
     // Update dynamic text in modals if they are visible
     updateDynamicText();
     
-    // 重新绘制画布以更新开始游戏的提示文本
+    // Redraw canvas to update start game text
     if (!gameStarted) {
         drawBoard();
     }
@@ -117,7 +117,7 @@ function getLanguage() {
         return savedLang;
     }
 
-    // 根据浏览器语言自动判断
+    // Auto-detect browser language
     const browserLang = navigator.language || navigator.userLanguage;
     console.log('Browser language detected:', browserLang);
     
@@ -188,14 +188,14 @@ class Particle {
         this.x = x;
         this.y = y;
         this.color = color;
-        this.velocityX = (Math.random() - 0.5) * 8; // 水平速度
-        this.velocityY = Math.random() * -5 - 2; // 向上的速度
-        this.gravity = 0.3; // 重力
-        this.life = 1.0; // 生命值
-        this.decay = Math.random() * 0.02 + 0.015; // 衰减速度
-        this.size = Math.random() * 4 + 2; // 粒子大小
-        this.rotation = Math.random() * Math.PI * 2; // 旋转角度
-        this.rotationSpeed = (Math.random() - 0.5) * 0.2; // 旋转速度
+        this.velocityX = (Math.random() - 0.5) * 8; // Horizontal velocity
+        this.velocityY = Math.random() * -5 - 2; // Upward velocity
+        this.gravity = 0.3; // Gravity
+        this.life = 1.0; // Life value
+        this.decay = Math.random() * 0.02 + 0.015; // Decay rate
+        this.size = Math.random() * 4 + 2; // Particle size
+        this.rotation = Math.random() * Math.PI * 2; // Rotation angle
+        this.rotationSpeed = (Math.random() - 0.5) * 0.2; // Rotation speed
     }
     
     update() {
@@ -204,7 +204,7 @@ class Particle {
         this.velocityY += this.gravity;
         this.life -= this.decay;
         this.rotation += this.rotationSpeed;
-        this.velocityX *= 0.98; // 空气阻力
+        this.velocityX *= 0.98; // Air resistance
     }
     
     draw(ctx) {
@@ -215,11 +215,11 @@ class Particle {
         ctx.translate(this.x, this.y);
         ctx.rotate(this.rotation);
         
-        // 绘制方形粒子
+        // Draw square particle
         ctx.fillStyle = this.color;
         ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
         
-        // 添加发光效果
+        // Add glow effect
         ctx.shadowColor = this.color;
         ctx.shadowBlur = 10;
         ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
@@ -241,7 +241,7 @@ function createParticlesForLine(lineY) {
     for (let x = 0; x < COLS; x++) {
         if (board[lineY][x]) {
             const blockColor = board[lineY][x];
-            // 为每个方块生成多个粒子
+            // Generate multiple particles for each block
             for (let i = 0; i < 8; i++) {
                 const particleX = x * BLOCK_SIZE + Math.random() * BLOCK_SIZE;
                 const particleY = lineY * BLOCK_SIZE + Math.random() * BLOCK_SIZE;
@@ -252,10 +252,10 @@ function createParticlesForLine(lineY) {
 }
 
 function updateParticles() {
-    // 更新所有粒子
+    // Update all particles
     particles.forEach(particle => particle.update());
     
-    // 移除死亡的粒子
+    // Remove dead particles
     particles = particles.filter(particle => !particle.isDead());
 }
 
@@ -267,11 +267,11 @@ function getRandomPiece() {
     const type = pieceKeys[Math.floor(Math.random() * pieceKeys.length)];
     const pieceData = PIECES[type];
     return {
-        shape: pieceData.shape.map(row => [...row]), // 创建shape的深拷贝，避免修改原始模板
+        shape: pieceData.shape.map(row => [...row]), // Create deep copy of shape to avoid modifying original template
         color: getComputedStyle(document.documentElement).getPropertyValue(pieceData.color.slice(4, -1)).trim(),
         x: Math.floor(COLS / 2) - Math.floor(pieceData.shape[0].length / 2),
         y: 0,
-        type: type // 添加type字段用于调试
+        type: type // Add type field for debugging
     };
 }
 
@@ -317,14 +317,14 @@ function drawBoard() {
             if (value) {
                 let blockColor = value;
                 
-                // 如果正在清行动画，为待清除行添加闪烁效果
+                // Add flashing effect for lines being cleared during animation
                 if (isClearing && clearingLines.includes(y)) {
-                    const flashInterval = 100; // 闪烁间隔ms
+                    const flashInterval = 100; // Flash interval in ms
                     const currentTime = Date.now();
                     const flashPhase = Math.floor(currentTime / flashInterval) % 2;
                     
                     if (flashPhase === 0) {
-                        // 闪烁时变白色
+                        // Flash to white color
                         blockColor = '#ffffff';
                     }
                 }
@@ -356,7 +356,7 @@ function drawBoard() {
         context.textAlign = 'center';
         context.textBaseline = 'middle';
         
-        const startText = translations['press-space-to-start'] || '按空格键开始';
+        const startText = translations['press-space-to-start'] || 'Press Space to Start';
         context.fillText(startText, canvas.width / 2, canvas.height / 2);
         context.restore();
     }
@@ -454,7 +454,7 @@ function pieceDrop() {
 }
 
 function clearLines() {
-    // 找到需要清除的行
+    // Find lines to clear
     const linesToClear = [];
     for (let y = ROWS - 1; y >= 0; y--) {
         let fullLine = true;
@@ -470,40 +470,40 @@ function clearLines() {
     }
     
     if (linesToClear.length > 0) {
-        // 开始清行动画
+        // Start line clearing animation
         clearLinesWithAnimation(linesToClear);
     }
 }
 
 function clearLinesWithAnimation(linesToClear) {
-    // 标记动画状态
+    // Mark animation state
     isClearing = true;
     clearingLines = linesToClear;
     clearingAnimationTime = 0;
     
-    // 为每行生成粒子效果
+    // Generate particle effects for each line
     linesToClear.forEach(lineY => {
         createParticlesForLine(lineY);
     });
     
-    // 立即更新显示以开始动画
+    // Immediately update display to start animation
     drawBoard();
     
-    // 800ms后真正清除行（增加时间让粒子效果更完整）
+    // Actually clear lines after 800ms (extended time for complete particle effects)
     setTimeout(() => {
         clearLinesImmediate(linesToClear);
     }, 800);
 }
 
 function clearLinesImmediate(linesToClear) {
-    // 真正清除行
-    linesToClear.sort((a, b) => b - a); // 从下往上清除
+    // Actually clear lines
+    linesToClear.sort((a, b) => b - a); // Clear from bottom to top
     linesToClear.forEach(lineY => {
         const row = board.splice(lineY, 1)[0].fill(0);
         board.unshift(row);
     });
     
-    // 更新分数
+    // Update score
     const linesCleared = linesToClear.length;
     const linePoints = [0, 40, 100, 300, 1200];
     score += linePoints[linesCleared] * level;
@@ -514,7 +514,7 @@ function clearLinesImmediate(linesToClear) {
         dropInterval = Math.max(150, 1000 - (level - 1) * 75);
     }
     
-    // 清除动画状态
+    // Clear animation state
     isClearing = false;
     clearingLines = [];
     clearingAnimationTime = 0;
@@ -525,7 +525,7 @@ function clearLinesImmediate(linesToClear) {
 function resetPiece() {
     currentPiece = nextPiece;
     nextPiece = getRandomPiece();
-    updateUI(); // 每次重置方块时更新UI，确保下一个方块显示正确
+    updateUI(); // Update UI each time piece is reset to ensure next piece displays correctly
     
     if (collide(currentPiece, board)) {
         gameOver();
@@ -542,7 +542,7 @@ function hardDrop() {
      resetPiece();
      clearLines();
      dropCounter = 0;
-     // resetPiece() 已经会调用 updateUI()，所以这里不需要重复调用
+     // resetPiece() already calls updateUI(), so no need to call it again here
 }
 
 function move(dir) {
@@ -566,7 +566,7 @@ function gameLoop(time = 0) {
         }
     }
     
-    // 始终更新粒子（即使游戏暂停或清行中）
+    // Always update particles (even when game is paused or clearing lines)
     updateParticles();
     
     drawBoard();
@@ -593,12 +593,12 @@ function init() {
     currentPiece = null;
     nextPiece = null;
     
-    // 重置动画状态
+    // Reset animation state
     isClearing = false;
     clearingLines = [];
     clearingAnimationTime = 0;
     
-    // 清空粒子
+    // Clear particles
     particles = [];
     
     updateUI();
@@ -610,7 +610,7 @@ function startGame() {
     gameStarted = true;
     nextPiece = getRandomPiece();
     resetPiece();
-    updateUI(); // 确保下一个方块在游戏开始时显示
+    updateUI(); // Ensure next piece is displayed when game starts
     lastTime = performance.now();
     gameLoop();
 }
