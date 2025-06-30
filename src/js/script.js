@@ -177,10 +177,11 @@ function getRandomPiece() {
     const type = pieceKeys[Math.floor(Math.random() * pieceKeys.length)];
     const pieceData = PIECES[type];
     return {
-        shape: pieceData.shape,
+        shape: pieceData.shape.map(row => [...row]), // 创建shape的深拷贝，避免修改原始模板
         color: getComputedStyle(document.documentElement).getPropertyValue(pieceData.color.slice(4, -1)).trim(),
         x: Math.floor(COLS / 2) - Math.floor(pieceData.shape[0].length / 2),
-        y: 0
+        y: 0,
+        type: type // 添加type字段用于调试
     };
 }
 
@@ -375,6 +376,7 @@ function clearLines() {
 function resetPiece() {
     currentPiece = nextPiece;
     nextPiece = getRandomPiece();
+    updateUI(); // 每次重置方块时更新UI，确保下一个方块显示正确
     
     if (collide(currentPiece, board)) {
         gameOver();
@@ -391,7 +393,7 @@ function hardDrop() {
      resetPiece();
      clearLines();
      dropCounter = 0;
-     updateUI();
+     // resetPiece() 已经会调用 updateUI()，所以这里不需要重复调用
 }
 
 function move(dir) {
@@ -448,6 +450,7 @@ function startGame() {
     gameStarted = true;
     nextPiece = getRandomPiece();
     resetPiece();
+    updateUI(); // 确保下一个方块在游戏开始时显示
     lastTime = performance.now();
     gameLoop();
 }
