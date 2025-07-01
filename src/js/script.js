@@ -520,6 +520,27 @@ function clearLinesImmediate(linesToClear) {
     clearingAnimationTime = 0;
     
     updateUI();
+    
+    // Check for additional lines to clear after blocks have fallen
+    // This handles the case where clearing lines causes new full lines to form
+    const additionalLinesToClear = [];
+    for (let y = ROWS - 1; y >= 0; y--) {
+        let fullLine = true;
+        for (let x = 0; x < COLS; x++) {
+            if (board[y][x] === 0) {
+                fullLine = false;
+                break;
+            }
+        }
+        if (fullLine) {
+            additionalLinesToClear.push(y);
+        }
+    }
+    
+    // If there are additional lines to clear, clear them recursively
+    if (additionalLinesToClear.length > 0) {
+        clearLinesWithAnimation(additionalLinesToClear);
+    }
 }
 
 function resetPiece() {
