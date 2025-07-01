@@ -10,20 +10,30 @@
     <link rel="stylesheet" href="src/css/style.css">
     <style>
         .lang-switcher {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+            position: fixed;
+            top: 15px;
+            right: 15px;
             z-index: 100;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
         }
         .lang-switcher a {
             color: #333;
             text-decoration: none;
-            padding: 5px;
+            padding: 4px 6px;
             font-family: 'Roboto', sans-serif;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+        .lang-switcher a:hover {
+            color: #3498db;
         }
         .lang-switcher a.active {
             font-weight: bold;
-            text-decoration: underline;
+            color: #3498db;
         }
     </style>
 </head>

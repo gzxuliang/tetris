@@ -22,16 +22,20 @@ body {
     justify-content: center;
     min-height: 100vh;
     margin: 0;
+    padding: 1rem;
+    box-sizing: border-box;
 }
 
 .game-container {
     display: flex;
     flex-direction: column; /* Changed to vertical layout */
     align-items: center; /* Center horizontally */
+    justify-content: center; /* Center vertically */
     gap: 1.5rem;
-    padding: 2rem;
-    /* Ensure game content is vertically centered in viewport */
-    min-height: calc(100vh - 4rem);
+    padding: 1rem;
+    /* Remove min-height to allow proper centering */
+    width: 100%;
+    max-width: 800px;
 }
 
 .game-main-section {
