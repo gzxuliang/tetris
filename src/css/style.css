@@ -79,13 +79,19 @@ canvas#game-board {
 .info-item {
     padding: 0.75rem 0;
     border-bottom: 1px solid var(--border-color);
+    /* Fixed height to prevent layout changes during language switching */
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Special handling for "Next" area, providing more space */
 .info-item:last-child {
     border-bottom: none;
+    min-height: 140px; /* More space for next piece canvas */
 }
-
 
 .info-card h2 {
     font-size: 1rem;
@@ -94,6 +100,15 @@ canvas#game-board {
     margin: 0 0 0.25rem 0;
     text-transform: uppercase;
     letter-spacing: 1px;
+    /* Fixed height to prevent layout jumps from text changes */
+    height: 20px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .info-card p {
@@ -101,6 +116,12 @@ canvas#game-board {
     margin: 0;
     font-weight: 700;
     color: var(--text-color);
+    /* Fixed height for number display */
+    height: 32px;
+    line-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .info-card-split {
@@ -125,6 +146,8 @@ canvas#game-board {
     width: 100%;
     height: 100px;
     margin-top: 0.5rem;
+    /* Center the canvas */
+    display: block;
 }
 
 .controls-card {
@@ -309,6 +332,43 @@ canvas#game-board {
         width: 100%;
         flex-direction: row; /* Horizontal layout on mobile */
         justify-content: space-around;
+    }
+    
+    /* Adjust info items for mobile horizontal layout */
+    .info-card {
+        flex-direction: row;
+        padding: 0.5rem;
+    }
+    
+    .info-item {
+        flex: 1;
+        min-height: 60px; /* Smaller height for mobile */
+        margin: 0 0.25rem;
+        padding: 0.5rem;
+        border-bottom: none;
+        border-right: 1px solid var(--border-color);
+    }
+    
+    .info-item:last-child {
+        border-right: none;
+        min-height: 60px; /* Same height as other items on mobile */
+    }
+    
+    #next-piece-canvas {
+        height: 40px; /* Smaller canvas for mobile */
+        margin-top: 0.25rem;
+    }
+    
+    .info-card h2 {
+        font-size: 0.8rem;
+        height: 16px;
+        line-height: 16px;
+    }
+    
+    .info-card p {
+        font-size: 1.2rem;
+        height: 20px;
+        line-height: 20px;
     }
     
     .controls-card {
