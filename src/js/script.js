@@ -454,25 +454,52 @@ function pieceDrop() {
 }
 
 function clearLines() {
-    // Find lines to clear
-    const linesToClear = [];
-    for (let y = ROWS - 1; y >= 0; y--) {
-        let fullLine = true;
-        for (let x = 0; x < COLS; x++) {
-            if (board[y][x] === 0) {
-                fullLine = false;
-                break;
+    // Find all lines to clear (including potential chain reactions)
+    const allLinesToClear = findAllLinesToClear();
+    
+    if (allLinesToClear.length > 0) {
+        // Start line clearing animation for all lines at once
+        clearLinesWithAnimation(allLinesToClear);
+    }
+}
+
+function findAllLinesToClear() {
+    const allLinesToClear = [];
+    let tempBoard = board.map(row => [...row]); // Create a copy of the board
+    
+    while (true) {
+        // Find lines to clear in current board state
+        const currentLinesToClear = [];
+        for (let y = ROWS - 1; y >= 0; y--) {
+            let fullLine = true;
+            for (let x = 0; x < COLS; x++) {
+                if (tempBoard[y][x] === 0) {
+                    fullLine = false;
+                    break;
+                }
+            }
+            if (fullLine) {
+                currentLinesToClear.push(y);
             }
         }
-        if (fullLine) {
-            linesToClear.push(y);
+        
+        // If no lines to clear, break the loop
+        if (currentLinesToClear.length === 0) {
+            break;
         }
+        
+        // Add these lines to the total list
+        allLinesToClear.push(...currentLinesToClear);
+        
+        // Simulate clearing these lines on the temp board
+        currentLinesToClear.sort((a, b) => b - a); // Clear from bottom to top
+        currentLinesToClear.forEach(lineY => {
+            const row = tempBoard.splice(lineY, 1)[0].fill(0);
+            tempBoard.unshift(row);
+        });
     }
     
-    if (linesToClear.length > 0) {
-        // Start line clearing animation
-        clearLinesWithAnimation(linesToClear);
-    }
+    return allLinesToClear;
 }
 
 function clearLinesWithAnimation(linesToClear) {
@@ -496,18 +523,36 @@ function clearLinesWithAnimation(linesToClear) {
 }
 
 function clearLinesImmediate(linesToClear) {
-    // Actually clear lines
-    linesToClear.sort((a, b) => b - a); // Clear from bottom to top
-    linesToClear.forEach(lineY => {
-        const row = board.splice(lineY, 1)[0].fill(0);
-        board.unshift(row);
-    });
+    // Since findAllLinesToClear already found all lines including chain reactions,
+    // we just need to clear them all at once
     
-    // Update score
-    const linesCleared = linesToClear.length;
+    // Count the total lines to be cleared
+    const totalLinesCleared = linesToClear.length;
+    
+    // Create a new board by filtering out the lines to be cleared
+    const newBoard = [];
+    const linesToClearSet = new Set(linesToClear);
+    
+    // Add empty rows at the top for each cleared line
+    for (let i = 0; i < totalLinesCleared; i++) {
+        newBoard.push(new Array(COLS).fill(0));
+    }
+    
+    // Add remaining rows (those not being cleared)
+    for (let y = 0; y < ROWS; y++) {
+        if (!linesToClearSet.has(y)) {
+            newBoard.push([...board[y]]);
+        }
+    }
+    
+    // Update the board
+    board = newBoard;
+    
+    // Update score based on total lines cleared
     const linePoints = [0, 40, 100, 300, 1200];
-    score += linePoints[linesCleared] * level;
-    lines += linesCleared;
+    const scoreIndex = Math.min(totalLinesCleared, linePoints.length - 1);
+    score += linePoints[scoreIndex] * level;
+    lines += totalLinesCleared;
 
     if (lines >= level * 10) {
         level++;
@@ -520,27 +565,6 @@ function clearLinesImmediate(linesToClear) {
     clearingAnimationTime = 0;
     
     updateUI();
-    
-    // Check for additional lines to clear after blocks have fallen
-    // This handles the case where clearing lines causes new full lines to form
-    const additionalLinesToClear = [];
-    for (let y = ROWS - 1; y >= 0; y--) {
-        let fullLine = true;
-        for (let x = 0; x < COLS; x++) {
-            if (board[y][x] === 0) {
-                fullLine = false;
-                break;
-            }
-        }
-        if (fullLine) {
-            additionalLinesToClear.push(y);
-        }
-    }
-    
-    // If there are additional lines to clear, clear them recursively
-    if (additionalLinesToClear.length > 0) {
-        clearLinesWithAnimation(additionalLinesToClear);
-    }
 }
 
 function resetPiece() {
