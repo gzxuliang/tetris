@@ -20,10 +20,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
+    height: 100vh;
     margin: 0;
-    padding: 1rem;
+    padding: 0;
     box-sizing: border-box;
+    overflow: hidden; /* Prevent all scrollbars */
 }
 
 .game-container {
@@ -31,11 +32,15 @@ body {
     flex-direction: column; /* Changed to vertical layout */
     align-items: center; /* Center horizontally */
     justify-content: center; /* Center vertically */
-    gap: 1.5rem;
-    padding: 1rem;
-    /* Remove min-height to allow proper centering */
+    gap: 1.5rem; /* Gap between elements */
+    padding: 2rem; /* Add padding for spacing from edges */
     width: 100%;
-    max-width: 800px;
+    max-width: 720px;
+    height: 100vh;
+    /* Scale down to fit in viewport */
+    transform: scale(0.85);
+    transform-origin: center center;
+    box-sizing: border-box;
 }
 
 .game-main-section {
@@ -160,10 +165,9 @@ canvas#game-board {
     /* Calculate width: game panel (300px + 16px padding) + gap (1.5rem) + info panel (200px) */
     width: calc(316px + 1.5rem + 200px);
     box-sizing: border-box;
-    /* Fixed height to prevent layout changes during language switching */
-    height: 170px;
-    /* Prevent content overflow */
-    overflow: hidden;
+    /* Remove min-height to allow natural sizing */
+    /* Allow content to expand naturally */
+    margin: 0; /* Remove margin since gap handles spacing */
 }
 
 .controls-card h2 {
@@ -317,8 +321,12 @@ canvas#game-board {
     .game-container {
         flex-direction: column;
         align-items: center;
-        gap: 1.5rem;
-        padding: 1rem;
+        gap: 1rem;
+        padding: 1.5rem;
+        transform: scale(0.8); /* Even smaller scale for mobile */
+        max-width: 100%;
+        height: 100vh;
+        justify-content: center; /* Center vertically on mobile too */
     }
     
     .game-main-section {
@@ -373,14 +381,42 @@ canvas#game-board {
     
     .controls-card {
         width: 100%;
+        /* Remove all height constraints */
+        margin: 0; /* Remove margin */
     }
     
     .controls-row {
-        flex-direction: column;
+        flex-direction: row; /* Keep horizontal layout on mobile */
+        flex-wrap: wrap; /* Allow wrapping if needed */
         gap: 0.5rem;
+        margin: 0.3rem 0; /* Reduce margin for mobile */
     }
     
     .control-item {
         justify-content: space-between;
+        flex: 0 0 45%; /* Make items slightly smaller to fit better */
+        font-size: 0.8rem; /* Smaller font for mobile */
+    }
+}
+
+/* Additional scaling for very small screens */
+@media (max-width: 480px) {
+    .game-container {
+        transform: scale(0.7);
+        gap: 0.8rem;
+        padding: 1rem;
+        height: 100vh;
+        justify-content: center; /* Center vertically on very small screens */
+    }
+    
+    .controls-card {
+        margin: 0; /* Remove margin */
+    }
+}
+
+/* Additional scaling for very large screens to ensure no overflow */
+@media (min-width: 1200px) {
+    .game-container {
+        transform: scale(0.9);
     }
 }
